@@ -17,10 +17,31 @@ class PollWidget extends \WP_Widget {
     protected $cookie_key_name = 'comm-dp';
 
     /**
+     * Cookie data
+     * @var mixed
+     */
+    protected $cookie_data = [];
+
+    /**
      * Set if current active poll is already answered or no
      * @var bool
      */
     protected $is_poll_answered = false;
+
+    /**
+     * User poll answer
+     * @var string
+     */
+    protected $poll_answer = '';
+
+    /**
+     * All poll answers dta
+     * @var array
+     */
+    protected $all_poll_answer = [
+        'a' => 0,
+        'b' => 0
+    ];
 
     /**
      * Initialize the class and set its properties.
@@ -70,7 +91,18 @@ class PollWidget extends \WP_Widget {
      * @return void
      */
     protected function check_answer() {
+        $answer_data       = \Delight\Cookie\Cookie::get($this->cookie_key_name);
+        $answer_data       = maybe_unserialize(stripslashes($answer_data));
+        $this->cookie_data = $answer_data;
 
+        if(is_a($this->poll,'WP_Post') && isset($this->cookie_data[$this->poll->ID])) :
+
+            $this->is_poll_answered = true;
+            $this->poll_answer      = $this->cookie_data[$this->poll->ID];
+            $answers                = get_post_meta($this->poll->ID,'poll_answers',true);
+            $this->all_poll_answer  = wp_parse_args($answers,$this->all_poll_answer);
+
+        endif;
     }
 
     /**
@@ -99,8 +131,29 @@ class PollWidget extends \WP_Widget {
 
         ?><div class="comm-dp-poll-anwser"><?php
 
-        // Display all answer
+        // Display all answers
         if(false !== $this->is_poll_answered) :
+        ?>
+        <form class="" action="<?php echo home_url('commdp/submit-poll'); ?>" method="post">
+            <label name='answer-1'>
+                <span><?php echo carbon_get_post_meta($this->poll->ID, 'commdp_answer_1'); ?></span>
+                <?php printf(__('- %s vote(s)','comm-db'),$this->all_poll_answer['a']); ?>
+                <?php if('a' === $this->poll_answer) : ?>
+                <?php _e('( You voted )','comm-db'); ?>
+                <?php endif; ?>
+            </label>
+
+            <label name='answer-2'>
+                <span><?php echo carbon_get_post_meta($this->poll->ID, 'commdp_answer_2'); ?></span>
+                <?php printf(__('- %s vote(s)','comm-db'),$this->all_poll_answer['b']); ?>
+                <?php if('b' === $this->poll_answer) : ?>
+                <?php _e('You voted','comm-db'); ?>
+                <?php endif; ?>
+            </label>
+        </form>
+        <?php
+
+        // Dislay answer form when current visitor hasn't answerd
         else :
         ?>
             <form class="" action="<?php echo home_url('commdp/submit-poll'); ?>" method="post">
