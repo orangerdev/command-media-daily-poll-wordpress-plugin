@@ -115,6 +115,7 @@ class Comm_Dp {
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-comm-dp-admin.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-comm-dp-poll.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
@@ -156,6 +157,8 @@ class Comm_Dp {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+
+		$poll 	= new COMMDP\Admin\Poll( $this->get_plugin_name(), $this->get_version() );
 
 	}
 
