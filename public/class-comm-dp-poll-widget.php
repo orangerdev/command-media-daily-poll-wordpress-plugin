@@ -105,12 +105,12 @@ class PollWidget extends \WP_Widget {
         ?>
             <form class="" action="<?php echo home_url('commdp/submit-poll'); ?>" method="post">
                 <label name='answer-1'>
-                    <input type='radio' name='answer' value=1 />
+                    <input type='radio' name='answer' value='a' />
                     <span><?php echo carbon_get_post_meta($this->poll->ID, 'commdp_answer_1'); ?></span>
                 </label>
 
                 <label name='answer-2'>
-                    <input type='radio' name='answer' value=2 />
+                    <input type='radio' name='answer' value='b' />
                     <span><?php echo carbon_get_post_meta($this->poll->ID, 'commdp_answer_2'); ?></span>
                 </label>
                 <input type="hidden" name="poll_id" value="<?php echo $this->poll->ID; ?>">
