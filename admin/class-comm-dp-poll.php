@@ -125,7 +125,13 @@ class Poll {
 				break;
 
 			case 'answer' :
-				echo '0/0';
+				$answer_data = get_post_meta($post_id, 'poll_answers', true);
+				$answer_data = wp_parse_args($answer_data, [
+					'a' => 0,
+					'b' => 0
+				]);
+
+				printf(__('%s/%s','comm-db'),$answer_data['a'],$answer_data['b']);
 				break;
 		endswitch;
     }
