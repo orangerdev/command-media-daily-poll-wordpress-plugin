@@ -65,6 +65,7 @@ register_deactivation_hook( __FILE__, 'deactivate_comm_dp' );
  * admin-specific hooks, and public-facing site hooks.
  */
 require plugin_dir_path( __FILE__ ) . 'includes/class-comm-dp.php';
+require plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
 /**
  * Begins execution of the plugin.
