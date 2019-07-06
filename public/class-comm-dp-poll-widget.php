@@ -72,7 +72,7 @@ class PollWidget extends \WP_Widget {
         if(false === $poll) :
             $posts = get_posts([
                 'numberpost' => 1,
-                'post_type'  => 'commdp-poll',
+                'post_type'  => 'cst_poll',
                 'meta_key'   => '_commdp_date_active',
                 'meta_value' => current_time('Y-m-d')
             ]);

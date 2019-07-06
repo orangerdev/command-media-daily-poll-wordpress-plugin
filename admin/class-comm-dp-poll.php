@@ -69,7 +69,7 @@ class Poll {
     		'supports'           => array( 'title' )
     	];
 
-    	register_post_type( 'commdp-poll', $args );
+    	register_post_type( 'cst_poll', $args );
     }
 
 	/**
@@ -79,6 +79,7 @@ class Poll {
 	 */
 	public function register_fields() {
 		Container::make('post_meta',__('Poll Setup','comm-dp'))
+			->where('post_type','=','cst_poll')
 			->add_fields([
 				Field::make('separator', 'commdp_display', 		__('Display', 'comm-dp')),
 				Field::make('date',		 'commdp_date_active',	__('Active Date', 'comm-dp'))
