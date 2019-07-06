@@ -2,6 +2,9 @@
 
 namespace COMMDP\Admin;
 
+use Carbon_Fields\Container;
+use Carbon_Fields\Field;
+
 class Poll {
 
 	/**
@@ -67,4 +70,21 @@ class Poll {
 
     	register_post_type( 'commdp-poll', $args );
     }
+
+	/**
+	 * Register poll's metabox fields
+	 * Hooked via action carbon_fields_register_fields, priority 999
+	 * @return void
+	 */
+	public function register_fields() {
+		Container::make('post_meta',__('Poll Setup','comm-dp'))
+			->add_fields([
+				Field::make('separator', 'commdp_display', 		__('Display', 'comm-dp')),
+				Field::make('date',		 'commdp_date_active',	__('Active Date', 'comm-dp'))
+					->set_storage_format('Y-m-d'),
+				Field::make('separator', 'commdp_answers', 		__('Answers', 'comm-dp')),
+				Field::make('text',		 'commdp_answer_1',		__('Answer #1', 'comm-dp')),
+				Field::make('text',		 'commdp_answer_2',		__('Answer #2', 'comm-dp')),
+			]);
+	}
 }
