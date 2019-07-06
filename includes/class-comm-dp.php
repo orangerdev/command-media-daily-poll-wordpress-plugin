@@ -161,6 +161,8 @@ class Comm_Dp {
 
 		$poll 	= new COMMDP\Admin\Poll( $this->get_plugin_name(), $this->get_version() );
 
+		$this->loader->add_action( 'init',	$poll, 'register_post_type', 999);
+
 	}
 
 	/**
