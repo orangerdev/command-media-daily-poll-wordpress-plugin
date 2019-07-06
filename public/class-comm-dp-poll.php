@@ -29,6 +29,12 @@ class Poll {
      */
     protected $messages = array();
 
+    /**
+     * Cookie key name
+     * @var string
+     */
+    protected $cookie_key_name = 'comm-dp';
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -40,6 +46,10 @@ class Poll {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 	}
+
+    protected function update_cookie($poll_id,$answer) {
+
+    }
 
     /**
      * Submit answer
@@ -56,8 +66,8 @@ class Poll {
 
         if(wp_verify_nonce($post_data['commdp-nonce'],'commdp-submit-answer')) :
 
+            $answer  = sanitize_text_field($post_data['answer']);
             $poll_id = intval($post_data['poll_id']);
-            $answer  = intval($post_data['answer']);
             $poll    = get_post($poll_id);
 
             if(!is_a($poll,'WP_Post')) :
@@ -65,13 +75,36 @@ class Poll {
                 $this->messages[]      = __('Wrong poll data','comm-dp');
             endif;
 
-            if(1 > $answer || 2 < $answer) :
+            if(!in_array($answer,['a','b'])) :
                 $this->is_submit_valid = false;
                 $this->messages[]      = __('Invalid answer','comm-dp');
+            endif;
+
+            if(false !== $this->is_submit_valid) :
+                $answers = get_post_meta($poll_id,'poll_answers',true);
+                $answers = wp_parse_args($answers,[
+                    'a' => 0,
+                    'b' => 0
+                ]);
+
+                $answers[$answer]++;
+
+                update_post_meta($poll_id,'poll_answers',$answers);
+
+                $cookie = new \Delight\Cookie\Cookie($this->cookie_key_name);
+                $cookie->setValue(serialize($answers));
+                $cookie->setMaxAge(YEAR_IN_SECONDS);
+                $cookie->setPath('/');
+                $cookie->save();
+                
+                $this->messages[] = __('Vote success','comm-dp');
+
             endif;
         else :
             $this->is_submit_valid = false;
             $this->messages[]      = __('Something wrong with the process','comm-dp');
         endif;
+
+        print_r($this->messages);
     }
 }
