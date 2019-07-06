@@ -190,6 +190,8 @@ class Comm_Dp {
 
 		$poll = new COMMDP\Front\Poll ( $this->get_plugin_name(), $this->get_version() );
 
+		$this->loader->add_action( 'commdp/submit-poll',	$poll, 'submit_answer', 999);
+
 	}
 
 	/**
