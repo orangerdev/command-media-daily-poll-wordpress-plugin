@@ -35,6 +35,12 @@ class Poll {
      */
     protected $cookie_key_name = 'comm-dp';
 
+    /**
+     * Cookie data
+     * @var mixed
+     */
+    protected $cookie_data = false;
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -47,8 +53,37 @@ class Poll {
 		$this->version = $version;
 	}
 
-    protected function update_cookie($poll_id,$answer) {
+    /**
+     * Get current cookie data
+     * @return void
+     */
+    protected function check_cookie_data() {
 
+        $answer_data       = \Delight\Cookie\Cookie::get($this->cookie_key_name);
+        $answer_data       = maybe_unserialize(stripslashes($answer_data));
+        $this->cookie_data = $answer_data;
+
+    }
+
+    /**
+     * Update cookie data
+     * @param  integer $poll_id     Given poll ID
+     * @param  string  $answer      User answer
+     * @return void
+     */
+    protected function update_cookie_answer($poll_id,$answer) {
+
+        if(!is_array($this->cookie_data)) :
+            $this->cookie_data = array();
+        endif;
+
+        $this->cookie_data[$poll_id] = $answer;
+
+        $cookie = new \Delight\Cookie\Cookie($this->cookie_key_name);
+        $cookie->setValue(serialize($this->cookie_data));
+        $cookie->setMaxAge(YEAR_IN_SECONDS);
+        $cookie->setPath('/');
+        $cookie->save();
     }
 
     /**
@@ -64,11 +99,18 @@ class Poll {
             'commdp-nonce' => NULL
         ]);
 
+        $this->check_cookie_data();
+
         if(wp_verify_nonce($post_data['commdp-nonce'],'commdp-submit-answer')) :
 
             $answer  = sanitize_text_field($post_data['answer']);
             $poll_id = intval($post_data['poll_id']);
             $poll    = get_post($poll_id);
+
+            if(isset($this->cookie_data[$poll_id])) :
+                $this->is_submit_valid = false;
+                $this->messages[]      = __('You already voted for this poll','comm-dp');
+            endif;
 
             if(!is_a($poll,'WP_Post')) :
                 $this->is_submit_valid = false;
@@ -91,12 +133,7 @@ class Poll {
 
                 update_post_meta($poll_id,'poll_answers',$answers);
 
-                $cookie = new \Delight\Cookie\Cookie($this->cookie_key_name);
-                $cookie->setValue(serialize($answers));
-                $cookie->setMaxAge(YEAR_IN_SECONDS);
-                $cookie->setPath('/');
-                $cookie->save();
-                
+                $this->update_cookie_answer($poll_id,$answer);
                 $this->messages[] = __('Vote success','comm-dp');
 
             endif;
@@ -104,7 +141,5 @@ class Poll {
             $this->is_submit_valid = false;
             $this->messages[]      = __('Something wrong with the process','comm-dp');
         endif;
-
-        print_r($this->messages);
     }
 }
