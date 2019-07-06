@@ -75,6 +75,14 @@ class Front {
 	public function enqueue_scripts() {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/comm-dp-public.js', array( 'jquery' ), $this->version, false );
+		wp_localize_script($this->plugin_name, 'commdp', [
+			'url' => [
+				'pollSubmit' => home_url('commdp/submit-poll')
+			],
+			'message' => [
+				'noVote' => __('You must choose a vote', 'comm-dp')
+			]
+		]);
 
 	}
 
