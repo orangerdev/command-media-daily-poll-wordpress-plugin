@@ -122,6 +122,7 @@ class Comm_Dp {
 		 * side of the site.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-comm-dp-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-comm-dp-poll.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-comm-dp-poll-widget.php';
 
 		$this->loader = new Comm_Dp_Loader();
@@ -186,6 +187,8 @@ class Comm_Dp {
 		$this->loader->add_filter( 'query_vars',			$plugin_public, 'register_query_vars',	999);
 		$this->loader->add_action( 'template_redirect',		$plugin_public, 'check_request_url', 	1);
 		$this->loader->add_action( 'widgets_init',			$plugin_public, 'register_widgets', 	100);
+
+		$poll = new COMMDP\Front\Poll ( $this->get_plugin_name(), $this->get_version() );
 
 	}
 
