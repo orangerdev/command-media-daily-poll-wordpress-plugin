@@ -91,4 +91,42 @@ class Poll {
 					->set_required(true),
 			]);
 	}
+
+	/**
+     * Set custom column into poll table
+     * Hooked via filter manage_commdp-poll_posts_columns, priority 999
+     * @param   array   columns
+     * @return  array
+     */
+    public function set_table_columns(array $columns) {
+		$columns = [
+			'cb'			=> '<input type="checkbox">',
+			'title'			=> __('Title', 'snkpo'),
+			'active_date'   => __('Active Date', 'snkpo'),
+        	'answer'		=> __('Answer', 'snkpo'),
+		];
+
+        return $columns;
+    }
+
+    /**
+     * Display the poll data in table
+     * Hooked via action manage_commdp-poll_posts_custom_column, priority 999
+     * @param  array  $column
+     * @param  int    $post_id
+     * @return void
+     */
+    public function display_data_in_table(string $column, int $post_id) {
+
+		switch($column) :
+			case 'active_date' :
+				$active_date = date('d F Y',strtotime(carbon_get_post_meta($post_id, 'commdp_date_active')));
+				echo $active_date;
+				break;
+
+			case 'answer' :
+				echo '0/0';
+				break;
+		endswitch;
+    }
 }
