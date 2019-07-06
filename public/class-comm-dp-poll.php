@@ -141,5 +141,8 @@ class Poll {
             $this->is_submit_valid = false;
             $this->messages[]      = __('Something wrong with the process','comm-dp');
         endif;
+
+        wp_redirect(home_url());
+        exit;
     }
 }
