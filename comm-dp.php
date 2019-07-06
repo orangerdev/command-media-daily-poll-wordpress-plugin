@@ -67,6 +67,17 @@ register_deactivation_hook( __FILE__, 'deactivate_comm_dp' );
 require plugin_dir_path( __FILE__ ) . 'includes/class-comm-dp.php';
 require plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
+if(!function_exists('__debug')) :
+
+	/**
+	 * Display data in query-monitor plugin
+	 * @return void
+	 */
+    function __debug() {
+		do_action('qm/info',func_get_args());
+    }
+endif;
+
 /**
  * Begins execution of the plugin.
  *
