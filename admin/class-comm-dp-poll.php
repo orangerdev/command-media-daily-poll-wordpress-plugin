@@ -66,7 +66,7 @@ class Poll {
     		'has_archive'        => true,
     		'hierarchical'       => false,
     		'menu_position'      => null,
-    		'supports'           => array( 'title', 'editor' )
+    		'supports'           => array( 'title' )
     	];
 
     	register_post_type( 'commdp-poll', $args );
@@ -82,10 +82,13 @@ class Poll {
 			->add_fields([
 				Field::make('separator', 'commdp_display', 		__('Display', 'comm-dp')),
 				Field::make('date',		 'commdp_date_active',	__('Active Date', 'comm-dp'))
-					->set_storage_format('Y-m-d'),
+					->set_storage_format('Y-m-d')
+					->set_required(true),
 				Field::make('separator', 'commdp_answers', 		__('Answers', 'comm-dp')),
-				Field::make('text',		 'commdp_answer_1',		__('Answer #1', 'comm-dp')),
-				Field::make('text',		 'commdp_answer_2',		__('Answer #2', 'comm-dp')),
+				Field::make('text',		 'commdp_answer_1',		__('Answer #1', 'comm-dp'))
+					->set_required(true),
+				Field::make('text',		 'commdp_answer_2',		__('Answer #2', 'comm-dp'))
+					->set_required(true),
 			]);
 	}
 }
