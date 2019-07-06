@@ -22,7 +22,7 @@
 					$('.comm-dp-poll-anwser form button').attr('disabled',true).html('Send your vote...');
 				},
 				success : function(response) {
-					console.log(response);
+					$('.comm-dp-poll-anwser').html(response.html);
 				}
 			})
 		}

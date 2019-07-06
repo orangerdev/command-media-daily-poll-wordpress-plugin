@@ -101,11 +101,11 @@ class Poll {
 
         $this->check_cookie_data();
 
-        if(wp_verify_nonce($post_data['commdp-nonce'],'commdp-submit-answer')) :
+        $poll_id = intval($post_data['poll_id']);
+        $poll    = get_post($poll_id);
+        $answer  = sanitize_text_field($post_data['answer']);
 
-            $answer  = sanitize_text_field($post_data['answer']);
-            $poll_id = intval($post_data['poll_id']);
-            $poll    = get_post($poll_id);
+        if(wp_verify_nonce($post_data['commdp-nonce'],'commdp-submit-answer')) :
 
             if(isset($this->cookie_data[$poll_id])) :
                 $this->is_submit_valid = false;
@@ -142,7 +142,45 @@ class Poll {
             $this->messages[]      = __('Something wrong with the process','comm-dp');
         endif;
 
-        wp_redirect(home_url());
+        if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') :
+
+            $respond_html = '';
+            $answers = get_post_meta($poll_id,'poll_answers',true);
+            $answers = wp_parse_args($answers,[
+                'a' => 0,
+                'b' => 0
+            ]);
+
+            ob_start();
+            ?>
+            <form class="" action="<?php echo home_url('commdp/submit-poll'); ?>" method="post">
+                <label name='answer-1'>
+                    <span><?php echo carbon_get_post_meta($poll_id, 'commdp_answer_1'); ?></span>
+                    <?php printf(__('- %s vote(s)','comm-db'),$answers['a']); ?>
+                    <?php if('a' === $answer) : ?>
+                    <?php _e('( You voted )','comm-db'); ?>
+                    <?php endif; ?>
+                </label>
+
+                <label name='answer-2'>
+                    <span><?php echo carbon_get_post_meta($poll_id, 'commdp_answer_2'); ?></span>
+                    <?php printf(__('- %s vote(s)','comm-db'),$answers['b']); ?>
+                    <?php if('b' === $answer) : ?>
+                    <?php _e('You voted','comm-db'); ?>
+                    <?php endif; ?>
+                </label>
+            </form>
+            <?php
+            $respond_html = ob_get_contents();
+            ob_end_clean();
+
+            wp_send_json([
+                'html'     => $respond_html,
+                'messages' => $this->messages
+            ]);
+        else :
+            wp_redirect(home_url());
+        endif;
         exit;
     }
 }
