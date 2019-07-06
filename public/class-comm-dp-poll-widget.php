@@ -96,7 +96,7 @@ class PollWidget extends \WP_Widget {
         if(false !== $this->is_poll_answered) :
         else :
         ?>
-            <form class="" action="<?php echo home_url('poll/submit'); ?>" method="post">
+            <form class="" action="<?php echo home_url('commdp/submit-poll'); ?>" method="post">
                 <label name='answer-1'>
                     <input type='radio' name='answer' value=1 />
                     <span><?php echo carbon_get_post_meta($this->poll->ID, 'commdp_answer_1'); ?></span>
