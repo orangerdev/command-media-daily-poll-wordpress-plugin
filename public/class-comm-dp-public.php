@@ -79,6 +79,51 @@ class Front {
 	}
 
 	/**
+     * Register rewrite url
+     * Hooked via action init, priority 1
+     * @return void
+     */
+    public function register_rewrite_url()
+    {
+		add_rewrite_tag ('%commdp-action%', '([^/]*)');
+        add_rewrite_rule('^commdp/([^/]*)/?',
+               'index.php?script=commdp&commdp-action=$matches[1]',
+               'top'
+           );
+    }
+
+	/**
+     * Register custom query vars
+     * @param  array $vars
+     * @return array
+     */
+    public function register_query_vars($vars)
+    {
+        $vars[] = 'script';
+        $vars[] = 'commdp-action';
+
+
+        return $vars;
+    }
+
+    /**
+     * Check rest url API
+     * Hooked via template_redirect, priority 1
+     * @return void
+     */
+    public function check_request_url()
+    {
+        global $wp_query;
+
+        if(isset($wp_query->query['script']) && 'commdp' === $wp_query->query['script']) :
+
+            $action     = $wp_query->query['commdp-action'];
+            do_action('commdp/'.$action);
+            exit;
+        endif;
+    }
+
+	/**
 	 * Register widgets
 	 * Hooked via action widgets_init, priority 999
 	 * @return void
