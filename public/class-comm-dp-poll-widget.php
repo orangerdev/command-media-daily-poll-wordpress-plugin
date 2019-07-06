@@ -46,15 +46,22 @@ class PollWidget extends \WP_Widget {
      */
     protected function check_poll() {
 
-        $posts = get_posts([
-            'numberpost' => 1,
-            'post_type'  => 'commdp-poll',
-            'meta_key'   => '_commdp_date_active',
-            'meta_value' => current_time('Y-m-d')
-        ]);
+        $poll = wp_cache_get('poll','commdp');
 
-        if(isset($posts[0])) :
-            $this->poll = $posts[0];
+        if(false === $poll) :
+            $posts = get_posts([
+                'numberpost' => 1,
+                'post_type'  => 'commdp-poll',
+                'meta_key'   => '_commdp_date_active',
+                'meta_value' => current_time('Y-m-d')
+            ]);
+
+            if(isset($posts[0])) :
+                $this->poll = $posts[0];
+                wp_cache_set('poll', $this->poll, 'commdp', HOUR_IN_SECONDS);
+            endif;
+        else :
+            $this->poll = $poll;
         endif;
     }
 
