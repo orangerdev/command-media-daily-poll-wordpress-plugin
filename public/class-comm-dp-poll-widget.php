@@ -113,6 +113,7 @@ class PollWidget extends \WP_Widget {
                     <input type='radio' name='answer' value=2 />
                     <span><?php echo carbon_get_post_meta($this->poll->ID, 'commdp_answer_2'); ?></span>
                 </label>
+                <input type="hidden" name="poll_id" value="<?php echo $this->poll->ID; ?>">
                 <?php wp_nonce_field('commdp-submit-answer', 'commdp-nonce'); ?>
                 <button type="submit" name="button">Vote</button>
             </form>
