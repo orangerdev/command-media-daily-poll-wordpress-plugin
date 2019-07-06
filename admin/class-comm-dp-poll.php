@@ -62,7 +62,7 @@ class Poll {
     		'has_archive'        => true,
     		'hierarchical'       => false,
     		'menu_position'      => null,
-    		'supports'           => array( 'title', 'thumbnail' )
+    		'supports'           => array( 'title', 'editor' )
     	];
 
     	register_post_type( 'commdp-poll', $args );
