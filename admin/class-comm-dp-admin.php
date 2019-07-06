@@ -63,18 +63,6 @@ class Admin {
 	 */
 	public function enqueue_styles() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Comm_Dp_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Comm_Dp_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/comm-dp-admin.css', array(), $this->version, 'all' );
 
 	}
@@ -86,20 +74,17 @@ class Admin {
 	 */
 	public function enqueue_scripts() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Comm_Dp_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Comm_Dp_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/comm-dp-admin.js', array( 'jquery' ), $this->version, false );
 
+	}
+
+	/**
+	 * Load carbon fields
+	 * Hooked via action after_setup_theme, priority 999
+	 * @return void
+	 */
+	public function load_carbon_fields() {
+		\Carbon_Fields\Carbon_Fields::boot();
 	}
 
 }

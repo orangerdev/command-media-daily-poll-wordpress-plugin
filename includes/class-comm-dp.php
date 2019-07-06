@@ -115,12 +115,15 @@ class Comm_Dp {
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-comm-dp-admin.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-comm-dp-poll.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-comm-dp-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-comm-dp-poll.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-comm-dp-poll-widget.php';
 
 		$this->loader = new Comm_Dp_Loader();
 
@@ -156,6 +159,14 @@ class Comm_Dp {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'after_setup_theme',		$plugin_admin, 'load_carbon_fields', 999);
+
+		$poll 	= new COMMDP\Admin\Poll( $this->get_plugin_name(), $this->get_version() );
+
+		$this->loader->add_action( 'init',										$poll, 'register_post_type', 	999);
+		$this->loader->add_action( 'carbon_fields_register_fields',				$poll, 'register_fields',	 	999);
+		$this->loader->add_filter( 'manage_commdp-poll_posts_columns',			$poll, 'set_table_columns',	 	999);
+		$this->loader->add_action( 'manage_commdp-poll_posts_custom_column', 	$poll, 'display_data_in_table', 999, 2);
 
 	}
 
@@ -170,8 +181,16 @@ class Comm_Dp {
 
 		$plugin_public = new COMMDP\Front( $this->get_plugin_name(), $this->get_version() );
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'wp_enqueue_scripts', 	$plugin_public, 'enqueue_styles' );
+		$this->loader->add_action( 'wp_enqueue_scripts', 	$plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'init',					$plugin_public, 'register_rewrite_url', 1);
+		$this->loader->add_filter( 'query_vars',			$plugin_public, 'register_query_vars',	999);
+		$this->loader->add_action( 'template_redirect',		$plugin_public, 'check_request_url', 	1);
+		$this->loader->add_action( 'widgets_init',			$plugin_public, 'register_widgets', 	100);
+
+		$poll = new COMMDP\Front\Poll ( $this->get_plugin_name(), $this->get_version() );
+
+		$this->loader->add_action( 'commdp/submit-poll',	$poll, 'submit_answer', 999);
 
 	}
 

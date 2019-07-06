@@ -2,3 +2,29 @@
  * All of the CSS for your public-facing functionality should be
  * included in this file.
  */
+
+.comm_daily_poll p {
+
+}
+
+.comm_daily_poll form {
+
+}
+
+.comm_daily_poll form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+}
+
+.comm_daily_poll form label span {
+
+}
+
+.comm_daily_poll form label input[type=radio] {
+
+}
+
+.comm_daily_poll form button {
+
+}

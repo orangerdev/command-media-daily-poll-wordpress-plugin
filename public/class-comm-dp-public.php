@@ -63,18 +63,6 @@ class Front {
 	 */
 	public function enqueue_styles() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Comm_Dp_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Comm_Dp_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/comm-dp-public.css', array(), $this->version, 'all' );
 
 	}
@@ -86,20 +74,70 @@ class Front {
 	 */
 	public function enqueue_scripts() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Comm_Dp_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Comm_Dp_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/comm-dp-public.js', array( 'jquery' ), $this->version, false );
+		wp_localize_script($this->plugin_name, 'commdp', [
+			'url' => [
+				'pollSubmit' => home_url('commdp/submit-poll')
+			],
+			'message' => [
+				'noVote' => __('You must choose a vote', 'comm-dp')
+			]
+		]);
 
+	}
+
+	/**
+     * Register rewrite url
+     * Hooked via action init, priority 1
+     * @return void
+     */
+    public function register_rewrite_url()
+    {
+		add_rewrite_tag ('%commdp-action%', '([^/]*)');
+        add_rewrite_rule('^commdp/([^/]*)/?',
+               'index.php?script=commdp&commdp-action=$matches[1]',
+               'top'
+           );
+    }
+
+	/**
+     * Register custom query vars
+     * @param  array $vars
+     * @return array
+     */
+    public function register_query_vars($vars)
+    {
+        $vars[] = 'script';
+        $vars[] = 'commdp-action';
+
+
+        return $vars;
+    }
+
+    /**
+     * Check rest url API
+     * Hooked via template_redirect, priority 1
+     * @return void
+     */
+    public function check_request_url()
+    {
+        global $wp_query;
+
+        if(isset($wp_query->query['script']) && 'commdp' === $wp_query->query['script']) :
+
+            $action     = $wp_query->query['commdp-action'];
+            do_action('commdp/'.$action);
+            exit;
+        endif;
+    }
+
+	/**
+	 * Register widgets
+	 * Hooked via action widgets_init, priority 999
+	 * @return void
+	 */
+	public function register_widgets() {
+		register_widget( '\COMMDP\Front\PollWidget' );
 	}
 
 }
