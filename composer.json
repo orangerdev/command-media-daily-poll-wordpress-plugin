@@ -1,0 +1,7 @@
+{
+    
+    "require": {
+        "htmlburger/carbon-fields": "^3.1",
+        "delight-im/cookie": "^3.1"
+    }
+}
