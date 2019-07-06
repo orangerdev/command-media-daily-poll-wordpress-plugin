@@ -157,6 +157,7 @@ class Comm_Dp {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'after_setup_theme',		$plugin_admin, 'load_carbon_fields' ,999);
 
 		$poll 	= new COMMDP\Admin\Poll( $this->get_plugin_name(), $this->get_version() );
 
